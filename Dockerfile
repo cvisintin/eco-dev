@@ -52,11 +52,13 @@ RUN    echo "en_US "$LANG" UTF-8" >> /etc/locale.gen \
     && locale-gen en_US $LANG \ 
     && update-locale LANG=$LANG LANGUAGE=$LANG
 
-# Download Rstudio, Julia, Zonation and Inconsolata
+# Download Rstudio, Shiny, Julia, Zonation and Inconsolata
 RUN    RSTUDIOVER=$(curl https://s3.amazonaws.com/rstudio-server/current.ver) \
+    && SHINYVER=$(curl https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION) \
     && JULIAVER=$(curl https://api.github.com/repos/JuliaLang/julia/releases/latest | grep tag_name | cut -d \" -f4 | sed 's/v//g') \
     && curl \
          -o rstudio.deb https://download2.rstudio.org/rstudio-server-$RSTUDIOVER-amd64.deb \
+         -o shiny.deb https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/shiny-server-$SHINYVER-amd64.deb \
          -o julia.tar.gz https://julialang.s3.amazonaws.com/bin/linux/x64/0.5/julia-$JULIAVER-linux-x86_64.tar.gz \ 
          -OL https://bintray.com/artifact/download/wkmor1/binaries/zonation.tar.gz \
          -OL http://mirrors.ctan.org/install/fonts/inconsolata.tds.zip
@@ -88,9 +90,10 @@ RUN    echo "deb https://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/
     && echo r-libs-user=$R_LIBS_USER >> /etc/rstudio/rsession.conf \
     && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc /usr/local/bin \
     && ln -s /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc /usr/local/bin \
+    && gdebi -n shiny.deb
     && apt-get clean \
     && apt-get autoremove \
-    && rm -rf var/lib/apt/lists/* rstudio.deb
+    && rm -rf var/lib/apt/lists/* rstudio.deb shiny.deb
     
 # Install Zonation
 RUN    mkdir -p zonation \
@@ -127,6 +130,7 @@ RUN    mkdir -p /var/log/supervisor /var/run/sshd \
 EXPOSE 8787
 EXPOSE 8888
 EXPOSE 22
+EXPOSE 3838
 
 # Start supervisor
 CMD    supervisord
