@@ -40,11 +40,13 @@ fi
 port_rstudio=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
 port_jupyter=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
 port_ssh=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
+port_shiny=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
 
 docker run -d \
   -p $port_rstudio:8787 \
   -p $port_jupyter:8888 \
   -p $port_ssh:22 \
+  -p $port_shiny:3838 \
   -m $mem \
   --name $user \
   -v /var/lib/docker/vfs/dir/$user:/home/$user \
