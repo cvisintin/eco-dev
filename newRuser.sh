@@ -58,7 +58,7 @@ docker run -d \
   -e https_proxy=http://wwwproxy.unimelb.edu.au:8000/ \
   -e ROOT=$root \
   --tmpfs /tmp:rw,exec,nosuid,size=100g \
-  wkmor1/eco-dev
+  cvisintin/eco-dev
   
 sleep 1
 
