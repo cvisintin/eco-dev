@@ -67,4 +67,5 @@ addSrvBlock.sh
 echo -e 'Hi! I have created a Boab account for you with the username: '$con$user$cof' and password: '$con$passwd$cof
 echo -e 'You can access the RStudio server at '$con'http://boab.qaeco.com/'$user'-rstudio/'$cof
 echo -e 'the Jupyter server at '$con'http://boab.qaeco.com/'$user'-jupyter/'$cof
+echo -e 'the Shiny server at '$con'http://boab.qaeco.com/'$user'-shiny/'$cof
 echo -e 'and the sftp server on port '$con$port_ssh$cof' at '$con$user'@boab.qaeco.com'$cof
