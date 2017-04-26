@@ -32,6 +32,7 @@ if [ "${users[i]}" = "boab_usage" ]; then continue; fi
 # get the ports each user is using
 export port_rstudio=$(docker port ${users[i]} 8787 | cut -d ":" -f 2-)
 export port_jupyter=$(docker port ${users[i]} 8888 | cut -d ":" -f 2-)
+export port_shiny=$(docker port ${users[i]} 3838 | cut -d ":" -f 2-)
 
 # add the reverse proxy block to the nginx conf file
 echo -e '
@@ -39,6 +40,20 @@ echo -e '
 \t\t rewrite ^/'${users[i]}'-rstudio/(.*)$ /$1 break;
 \t\t proxy_pass      http://localhost:'$port_rstudio';
 \t\t proxy_redirect  http://localhost:'$port_rstudio'/ $scheme://$host/'${users[i]}'-rstudio/;
+\t\t proxy_http_version 1.1;
+\t\t proxy_set_header Upgrade $http_upgrade;
+\t\t proxy_set_header Connection "upgrade";
+\t\t proxy_connect_timeout       300;
+\t\t proxy_send_timeout          300;
+\t\t proxy_read_timeout          300;
+\t\t send_timeout                300;
+\t }
+
+echo -e '
+\t location /'${users[i]}'-shiny/ {
+\t\t rewrite ^/'${users[i]}'-shiny/(.*)$ /$1 break;
+\t\t proxy_pass      http://localhost:'$port_shiny';
+\t\t proxy_redirect  http://localhost:'$port_shiny'/ $scheme://$host/'${users[i]}'-shiny/;
 \t\t proxy_http_version 1.1;
 \t\t proxy_set_header Upgrade $http_upgrade;
 \t\t proxy_set_header Connection "upgrade";
